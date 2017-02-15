@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+	</head>
+	<body bgcolor='#F9E9CD'>
+		<style type="text/css">
+			DIV{
+				margin: 0 auto;
+				display: table;
+				text-align: center;
+				font-family: Consolas;
+				color: #EEEEEE;
+			}
+			TABLE{
+				width: 100%;
+				height: 100%;
+			}
+			TD {
+				width: 33%;
+				height: 33%;
+			}
+		</style>
+		<div id='field'>
+		<table
+		onmousedown = 'MouseClick(event)'
+		bgcolor='#EEEEEE'
+		>
+			<tr bgcolor='#F1C7A7'>
+				<td></td><td></td><td></td>
+			</tr>
+			<tr bgcolor='#EAB48B'>
+				<td></td><td></td><td></td>
+			</tr>
+			<tr bgcolor='#D19261'>
+				<td></td><td></td><td></td>
+			</tr>
+		</table>
+		</div>
+		<script>
+			"use strict";
+			var LogOn = true;
+			var tmp;
+			var player = "X";
+			var FieldSize = Math.ceil(Math.min(screen.availHeight, screen.availWidth ) * 0.8)
+			field.style.width = FieldSize + "px";
+			field.style.height = FieldSize + "px";
+			field.style.fontSize = FieldSize/4 + "px"
+			function lo9(str, alert){
+				if(LogOn){
+					if(alert){
+						alert(str);
+					}
+					else{
+						console.log(str);
+					}
+				}
+			}
+			function GetObjectCopy(inputObject) {
+				lo9(".GetObjectCopy: input object is: " + inputObject)
+				return JSON.parse(JSON.stringify(inputObject));
+			}
+			function ChangePlayer() {
+				switch (player) {
+					case "X":
+						player = "O";
+						break;
+					case "O":
+						player = "X";
+						break;
+				}
+			}
+			function GetMapFromHTML() {
+				var map = [];
+				var table = field.children[0].children[0];
+				for(var y = 0; y < table.childElementCount; y++){
+					var row = table.children[y];
+					for(var x = 0; x < row.childElementCount; x++){
+						var ceil = row.children[x];
+						map.push(ceil.innerText);
+					}
+				}
+				return map;	
+			}
+			function FindFillLine(letter){
+				var map = GetMapFromHTML();
+				return	(map[0] == letter && map[1] == letter && map[2] == letter) ||
+						(map[3] == letter && map[4] == letter && map[5] == letter) ||
+						(map[6] == letter && map[7] == letter && map[8] == letter) ||
+						(map[0] == letter && map[3] == letter && map[6] == letter) ||
+						(map[1] == letter && map[4] == letter && map[7] == letter) ||
+						(map[2] == letter && map[5] == letter && map[8] == letter) ||
+						(map[0] == letter && map[4] == letter && map[8] == letter) ||
+						(map[6] == letter && map[4] == letter && map[2] == letter)
+			}
+			function ChekFieldFill(){
+				var map = GetMapFromHTML();
+				return !~map.indexOf("");
+			}
+			function ChekContentCeil(element) {
+				return element.srcElement.innerText;
+			}
+			function SetContentInCeil(element, content) {
+				element.srcElement.innerText = content;
+			}
+			function MouseClick(element) {
+				console.log(element);
+				tmp = element;
+				if(ChekContentCeil(element)){
+					//animation
+					return;
+				}
+				SetContentInCeil(element, player)
+				if(FindFillLine(player)){
+					alert("Game over.\n\nPlayer " + player + " win!");
+					location.reload();
+				}
+				if(ChekFieldFill()){
+					alert("Game over. Drow!");
+					location.reload();
+				}
+				//AI
+				ChangePlayer();
+			}
+		</script>
+	</body>
+</html>
